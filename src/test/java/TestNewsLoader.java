@@ -62,5 +62,15 @@ public class TestNewsLoader {
         assertThat(publishableNews.getSubscribentContent().size(), is(1));
     }
 
+    @Test
+    public void TestNonSubscriber() {
+        IncomingNews incomingNews = new IncomingNews();
+        when(newsReader.read()).thenReturn(incomingNews);
+        NewsLoader newsLoader = new NewsLoader();
+        PublishableNews publishableNews = newsLoader.loadNews();
+        publishableNews.addPublicInfo("content");
+        assertThat(publishableNews.getPublicContent().size(), is(1));
+    }
+
 
 }
