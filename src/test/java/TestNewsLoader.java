@@ -1,13 +1,14 @@
-import edu.iis.mto.staticmock.ConfigurationLoader;
-import edu.iis.mto.staticmock.NewsLoader;
-import edu.iis.mto.staticmock.NewsReaderFactory;
+import edu.iis.mto.staticmock.*;
 import edu.iis.mto.staticmock.reader.FileNewsReader;
+import edu.iis.mto.staticmock.reader.NewsReader;
 import edu.iis.mto.staticmock.reader.WebServiceNewsReader;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
@@ -22,6 +23,7 @@ public class TestNewsLoader {
     private NewsReaderFactory newsReaderFactory;
     private FileNewsReader fileNewsReader;
     private WebServiceNewsReader webServiceNewsReader;
+    private NewsReader newsReader;
     @Before
     public void SetUp(){
         mockStatic(ConfigurationLoader.class);
@@ -32,7 +34,7 @@ public class TestNewsLoader {
 
         fileNewsReader = mock(FileNewsReader.class);
         webServiceNewsReader = mock(WebServiceNewsReader.class);
-
+        newsReader = mock(NewsReader.class);
         when(ConfigurationLoader.getInstance()).thenReturn(configurationLoader);
         when(NewsReaderFactory.getReader("File")).thenReturn(fileNewsReader);
         when(NewsReaderFactory.getReader("WS")).thenReturn(webServiceNewsReader);
@@ -41,8 +43,14 @@ public class TestNewsLoader {
     @Test
         public void TestLoadNews(){
 
+        IncomingNews incomingNews = new IncomingNews();
+        when(newsReader.read()).thenReturn(incomingNews);
         NewsLoader newsLoader = new NewsLoader();
-        newsLoader.loadNews();
+        PublishableNews publishableNews = newsLoader.loadNews();
+        publishableNews.addPublicInfo("content");
+        assertThat(publishableNews.getPublicContent().size(),is(1));
 
     }
+
+
 }
