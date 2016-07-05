@@ -52,5 +52,15 @@ public class TestNewsLoader {
 
     }
 
+    @Test
+    public void TestSubscriber() {
+        IncomingNews incomingNews = new IncomingNews();
+        when(newsReader.read()).thenReturn(incomingNews);
+        NewsLoader newsLoader = new NewsLoader();
+        PublishableNews publishableNews = newsLoader.loadNews();
+        publishableNews.addForSubscription("content", SubsciptionType.A);
+        assertThat(publishableNews.getSubscribentContent().size(), is(1));
+    }
+
 
 }
